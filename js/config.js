@@ -5,8 +5,15 @@ import {OrbitControls} from './libs/OrbitControls.js';
 let init, modelLoad;
 let gltfpath = "assets/spiderMan.glb";
 let texLoader = new THREE.TextureLoader();
-let arrayObjects = [];
-let raycaster = new THREE.Raycaster(),mouse = new THREE.Vector2(),SELECTED;
+let arrayObjects = [],mixer;
+let anim = {
+    'idle': 'idle',
+    'walk': 'walk',
+    'run': 'run',
+    'jump': 'jump'
+}
+let animClips = [];
+
 
 $(document).ready(function () {
     let detect = detectWebGL();
@@ -14,7 +21,7 @@ $(document).ready(function () {
         init = new sceneSetup(70, 1, 1000, 0, 2.5, 3.5);
         modelLoad = new objLoad();
         modelLoad.Model();
-        init.renderer.domElement.addEventListener('pointerdown', onDocumentMouseDown, true);
+
     } else if (detect == 0) {
         alert("PLEASE ENABLE WEBGL IN YOUR BROWSER....");
     } else if (detect == -1) {
@@ -123,25 +130,19 @@ const onWindowResize=()=> {
 
 window.addEventListener('resize', onWindowResize, false);
 
-const onDocumentMouseDown = (event) => {
-    event.preventDefault();
-    const rect = init.renderer.domElement.getBoundingClientRect();        
-    mouse.x = ( ( event.clientX - rect.left ) / ( rect.right - rect.left ) ) * 2 - 1;
-    mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
-    raycaster.setFromCamera( mouse, init.cameraMain );
-    let intersects = raycaster.intersectObjects( arrayObjects,true );
-    if ( intersects.length > 0 ) {	 
-        SELECTED = intersects[ 0 ].object;	
-        console.log('SELECTED--->',SELECTED);
-    }
-}
 
 class objLoad {
     constructor() {
 
     }
-
+   
     Model() {
+        Object.entries(anim).map(([key, value]) => {
+            console.log('KEY---<',key,'VALUE--->',value);
+            // this.loader.load('../assets/character/' + value + '.glb', (value) => {
+            //     animClips[key] = value.animations[0];
+            // })
+        })
         this.loader = new GLTFLoader();
         this.loader.load(gltfpath, gltf => {            
             this.mesh = gltf.scene;
