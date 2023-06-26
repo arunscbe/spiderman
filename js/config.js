@@ -2,17 +2,19 @@ import * as THREE from './libs/three.module.js';
  import { GLTFLoader } from './libs/GLTFLoader.js';
 import {OrbitControls} from './libs/OrbitControls.js';
 // import {onWindowResize} from './resize.js'
-let init, modelLoad;
+let init, modelLoad,character;
 let gltfpath = "assets/spiderMan.glb";
 let texLoader = new THREE.TextureLoader();
 let arrayObjects = [],mixer;
 let anim = {
     'idle': 'idle',
-    'walk': 'walk',
-    'run': 'run',
-    'jump': 'jump'
+    'dance': 'dance',
+    'fight': 'fight',
+    'walking': 'walking',
+    'run':'run',
 }
 let animClips = [];
+const clock = new THREE.Clock();
 
 
 $(document).ready(function () {
@@ -28,7 +30,9 @@ $(document).ready(function () {
         alert(detect);
         alert("YOUR BROWSER DOESNT SUPPORT WEBGL.....");
     }
-
+    $('.actions').on('click',function(e){
+        playAnimation(e.target.id);
+    })
 
 
 });
@@ -114,6 +118,10 @@ class sceneSetup {
     }
     animate() {
         requestAnimationFrame(this.animate.bind(this));
+        this.delta = clock.getDelta();
+        if (mixer) {
+            mixer.update(this.delta);
+        }
         this.controls.update();
         this.renderer.render(this.scene, this.cameraMain);
     }
@@ -137,17 +145,35 @@ class objLoad {
     }
    
     Model() {
-        Object.entries(anim).map(([key, value]) => {
-            console.log('KEY---<',key,'VALUE--->',value);
-            // this.loader.load('../assets/character/' + value + '.glb', (value) => {
-            //     animClips[key] = value.animations[0];
-            // })
-        })
         this.loader = new GLTFLoader();
+        Object.entries(anim).map(([key, value]) => {
+            console.log('VALUE--->',value);
+            this.loader.load('assets/anims/' + value + '.glb', (value) => {
+                animClips[key] = value.animations[0];
+            })
+        })
         this.loader.load(gltfpath, gltf => {            
-            this.mesh = gltf.scene;
-            this.mesh.scale.set(2, 2, 2);
-            init.scene.add(this.mesh);
+            character = gltf.scene;
+            character.scale.set(2, 2, 2);
+            mixer = new THREE.AnimationMixer(character);
+            this.action = mixer.clipAction(animClips['idle']);
+            this.action.play();
+            // this.action.loop = THREE.LoopOnce;
+            init.scene.add(character);
         });
     }
+}
+
+const playAnimation = (data) => {
+    mixer = new THREE.AnimationMixer(character);
+    let action = mixer.clipAction(animClips[data]);
+    action.fadeIn(.5);
+    action.play();
+    action.loop = THREE.LoopOnce;
+    if(data === 'dance' ||data === 'fight' ){
+        // action.loop = THREE.LoopOnce;
+    }
+    mixer.addEventListener('finished',(e)=>{
+        console.log('completed',e);
+    });
 }
