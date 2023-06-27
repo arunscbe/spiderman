@@ -5,7 +5,7 @@ import {OrbitControls} from './libs/OrbitControls.js';
 let init, modelLoad,character,box;
 let gltfpath = "assets/box.glb";
 let texLoader = new THREE.TextureLoader();
-let arrayObjects = [],mixer;
+let arrayObjects = [],mixer,mixerBox;
 let anim = {
     'idle': 'idle',
     'dance': 'dance',
@@ -26,6 +26,7 @@ $(document).ready(function () {
         init = new sceneSetup(70, 1, 1000, 0, 2.5, 3.5);
         modelLoad = new objLoad();
         modelLoad.Model();
+        // window.database = init.scene;
 
     } else if (detect == 0) {
         alert("PLEASE ENABLE WEBGL IN YOUR BROWSER....");
@@ -75,6 +76,7 @@ class sceneSetup {
     constructor(FOV, near, far, x, y, z, ambientColor) {
         this.container = document.getElementById("canvas");
         this.scene = new THREE.Scene();
+
         this.addingCube();
         this.camera(FOV, near, far, x, y, z);
         this.ambientLight(ambientColor);
@@ -125,6 +127,9 @@ class sceneSetup {
         if (mixer) {
             mixer.update(this.delta);
         }
+        if(mixerBox){
+            mixerBox.update(this.delta);
+        }
         this.controls.update();
         this.renderer.render(this.scene, this.cameraMain);
     }
@@ -151,6 +156,7 @@ class objLoad {
         this.loader = new GLTFLoader();
         Object.entries(anim).map(([key, value]) => {
             this.loader.load('assets/anims/' + value + '.glb', (value) => {
+                //  console.log(value);
                 animClips[key] = value.animations[0];
             })
         })
@@ -165,11 +171,7 @@ class objLoad {
         });
         this.loader.load('assets/box.glb' , gltf=>{
             box = gltf.scene;
-            box.scale.set(2, 2, 2);
-            mixer = new THREE.AnimationMixer(box);
-            // this.action = mixer.clipAction();
-            // this.action.play();
-            console.log('MIXER--->',mixer);
+            box.scale.set(2, 2, 2);            
             box.traverse((child)=>{
                 if(child.isMesh){
                     if(child.name === 'Cover'){
@@ -182,8 +184,11 @@ class objLoad {
                     }
                 }
             });
+            // mixerBox = new THREE.AnimationMixer( gltf.scene );
+            // this.actionOne = mixerBox.clipAction(gltf.animations[0]);
+            // this.actionOne.play();
             init.scene.add(box);
-        })
+        });
     }
 }
 
