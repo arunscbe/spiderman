@@ -2,8 +2,8 @@ import * as THREE from './libs/three.module.js';
  import { GLTFLoader } from './libs/GLTFLoader.js';
 import {OrbitControls} from './libs/OrbitControls.js';
 // import {onWindowResize} from './resize.js'
-let init, modelLoad,character;
-let gltfpath = "assets/spiderMan.glb";
+let init, modelLoad,character,box;
+let gltfpath = "assets/box.glb";
 let texLoader = new THREE.TextureLoader();
 let arrayObjects = [],mixer;
 let anim = {
@@ -12,6 +12,9 @@ let anim = {
     'fight': 'fight',
     'walking': 'walking',
     'run':'run',
+    'looking':'looking',
+    'hi':'hi',
+    'boxAnim':'boxAnim'
 }
 let animClips = [];
 const clock = new THREE.Clock();
@@ -147,20 +150,40 @@ class objLoad {
     Model() {
         this.loader = new GLTFLoader();
         Object.entries(anim).map(([key, value]) => {
-            console.log('VALUE--->',value);
             this.loader.load('assets/anims/' + value + '.glb', (value) => {
                 animClips[key] = value.animations[0];
             })
         })
-        this.loader.load(gltfpath, gltf => {            
+        this.loader.load('assets/spiderMan.glb', gltf => {            
             character = gltf.scene;
-            character.scale.set(2, 2, 2);
+            character.scale.set(2, 2, 2);           
             mixer = new THREE.AnimationMixer(character);
-            this.action = mixer.clipAction(animClips['idle']);
-            this.action.play();
+            // this.action = mixer.clipAction(animClips['hi']);
+            // this.action.play();
             // this.action.loop = THREE.LoopOnce;
             init.scene.add(character);
         });
+        this.loader.load('assets/box.glb' , gltf=>{
+            box = gltf.scene;
+            box.scale.set(2, 2, 2);
+            mixer = new THREE.AnimationMixer(box);
+            // this.action = mixer.clipAction();
+            // this.action.play();
+            console.log('MIXER--->',mixer);
+            box.traverse((child)=>{
+                if(child.isMesh){
+                    if(child.name === 'Cover'){
+                        child.material = new THREE.MeshPhongMaterial({
+                            transparent: true,
+                            opacity:.5,
+                            combine: THREE.MixOperation,
+                            side: THREE.DoubleSide
+                        })
+                    }
+                }
+            });
+            init.scene.add(box);
+        })
     }
 }
 
