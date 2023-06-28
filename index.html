@@ -21,19 +21,50 @@
     <script src="js/libs/patrol.js"></script> -->
    
     <body>
+        
+            <button class="forSpeach"  style="border: transparent;padding: 0 0.5rem;">Speech</button>
+        
+         <h3 id="output" class="hide"></h3>
         <div class="wrapper">
             <div class="actions">
                 <button id="interact">Interact</button>
-                <button id="idle">Idle</button>
+                <!-- <button id="idle">Idle</button>
                 <button id="run">Run</button>
-                <button id="walking">walking</button>
+                <button id="walk">walk</button>
                 <button id="fight">Fight</button>
                 <button id="dance">Dance</button>
-                <button id="stop">Stop</button>
+                <button id="stop">Stop</button> -->
             </div>
       <div id = "canvas"></div>
       </div>
     </body>
     <script type="module"src="js/config.js"></script>
-    
+    <script>
+        // import {playAnimation} from "js/config.js"
+        // runSpeechRecog = () => {
+        //    document.getElementById("output").innerHTML = "Loading text...";
+        //    var output = document.getElementById('output');
+        //    let recognization = new webkitSpeechRecognition();
+        //    recognization.onstart = () => {
+        //      console.log('lisssss....');
+        //    }
+        //    recognization.onresult = (e) => {
+              
+        //       var transcript = e.results[0][0].transcript;
+        //         console.log(transcript.split(" "));
+        //         let storeArray = transcript.split(" ");
+        //         storeArray.forEach(data => {
+        //             if(data === "dance"){
+        //                 playAnimation(data);
+        //                 console.log("yess....",data);
+        //                 return;
+        //             }
+        //         }); 
+        //     //   output.innerHTML = transcript;
+        //     //   output.classList.remove("hide")
+        //     //   action.innerHTML = "";
+        //    }
+        //    recognization.start();
+        // }
+     </script>
 </html>

@@ -2,13 +2,13 @@ import * as THREE from './libs/three.module.js';
  import { GLTFLoader } from './libs/GLTFLoader.js';
 import {OrbitControls} from './libs/OrbitControls.js';
 let init, modelLoad,character,box,boxAnim,refCube;
-let arrayObjects = [],mixer,mixerBox,mixerTest;
+let arrayObjects = [],mixer,mixerBox;
 let anim = {
     'hi':'hi',
     'idle': 'idle',
     'dance': 'dance',
     'fight': 'fight',
-    'walking': 'walking',
+    'walk': 'walk',
     'run':'run',
     'looking':'looking',
     
@@ -27,6 +27,44 @@ $(document).ready(function () {
         refCube = new THREE.CubeTextureLoader()
         .setPath( 'imgs/' )					
         .load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );
+
+
+        $('.forSpeach').on('click',function(){
+            runSpeechRecog();
+        })
+        const runSpeechRecog = () => {
+            document.getElementById("output").innerHTML = "Loading text...";
+            var output = document.getElementById('output');
+            let recognization = new webkitSpeechRecognition();
+            recognization.onstart = () => {
+              console.log('lisssss....');
+            }
+            recognization.onresult = (e) => {               
+               var transcript = e.results[0][0].transcript;
+                 console.log(transcript.split(" "));
+                 let storeArray = transcript.split(" ");
+                 storeArray.forEach(data => {
+                    switch(data){
+                        case "dance":
+                            playAnimation(data);
+                            break;
+                        case "run":
+                            playAnimation(data);
+                            break;
+                        case "walk":
+                            playAnimation(data);
+                            break;
+                        case "fight":
+                            playAnimation(data);
+                            break;
+                        case "stop":
+                            playAnimation(data);
+                            break;
+                    }
+                 }); 
+            }
+            recognization.start();
+         }
 
     } else if (detect == 0) {
         alert("PLEASE ENABLE WEBGL IN YOUR BROWSER....");
@@ -195,7 +233,7 @@ class objLoad {
     }
 }
 
-const playAnimation = (data) => {
+export const playAnimation = (data) => {
     console.log(data);
     if(data === "interact"){
         mixerBox = new THREE.AnimationMixer( box );
