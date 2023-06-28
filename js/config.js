@@ -1,20 +1,17 @@
 import * as THREE from './libs/three.module.js';
  import { GLTFLoader } from './libs/GLTFLoader.js';
 import {OrbitControls} from './libs/OrbitControls.js';
-// import {onWindowResize} from './resize.js'
-let init, modelLoad,character,box;
-let gltfpath = "assets/box.glb";
-let texLoader = new THREE.TextureLoader();
-let arrayObjects = [],mixer,mixerBox;
+let init, modelLoad,character,box,boxAnim,refCube;
+let arrayObjects = [],mixer,mixerBox,mixerTest;
 let anim = {
+    'hi':'hi',
     'idle': 'idle',
     'dance': 'dance',
     'fight': 'fight',
     'walking': 'walking',
     'run':'run',
     'looking':'looking',
-    'hi':'hi',
-    'boxAnim':'boxAnim'
+    
 }
 let animClips = [];
 const clock = new THREE.Clock();
@@ -27,6 +24,9 @@ $(document).ready(function () {
         modelLoad = new objLoad();
         modelLoad.Model();
         // window.database = init.scene;
+        refCube = new THREE.CubeTextureLoader()
+        .setPath( 'imgs/' )					
+        .load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );
 
     } else if (detect == 0) {
         alert("PLEASE ENABLE WEBGL IN YOUR BROWSER....");
@@ -170,12 +170,15 @@ class objLoad {
             init.scene.add(character);
         });
         this.loader.load('assets/box.glb' , gltf=>{
+            boxAnim = gltf;
             box = gltf.scene;
             box.scale.set(2, 2, 2);            
             box.traverse((child)=>{
                 if(child.isMesh){
                     if(child.name === 'Cover'){
                         child.material = new THREE.MeshPhongMaterial({
+                            envMap:refCube,
+                            reflectivity: .4,
                             transparent: true,
                             opacity:.5,
                             combine: THREE.MixOperation,
@@ -184,8 +187,8 @@ class objLoad {
                     }
                 }
             });
-            // mixerBox = new THREE.AnimationMixer( gltf.scene );
-            // this.actionOne = mixerBox.clipAction(gltf.animations[0]);
+            // mixerBox = new THREE.AnimationMixer( box );
+            // this.actionOne = mixerBox.clipAction(boxAnim.animations[0]);
             // this.actionOne.play();
             init.scene.add(box);
         });
@@ -193,15 +196,47 @@ class objLoad {
 }
 
 const playAnimation = (data) => {
-    mixer = new THREE.AnimationMixer(character);
-    let action = mixer.clipAction(animClips[data]);
-    action.fadeIn(.5);
-    action.play();
-    action.loop = THREE.LoopOnce;
-    if(data === 'dance' ||data === 'fight' ){
-        // action.loop = THREE.LoopOnce;
+    console.log(data);
+    if(data === "interact"){
+        mixerBox = new THREE.AnimationMixer( box );
+        const action = mixerBox.clipAction(boxAnim.animations[0]);
+              action.reset(); 
+              action.timeScale = 1;
+              action.clampWhenFinished = true;
+              action.loop = THREE.LoopOnce;
+              action.play();
+        mixerBox.addEventListener('finished',()=>{
+            box.visible = false;
+            mixer = new THREE.AnimationMixer(character);
+            let action = mixer.clipAction(animClips['hi']);
+                // action.fadeIn(.5);
+                action.play();
+                // action.loop = THREE.LoopOnce;
+           /* mixer.addEventListener('finished',()=>{
+                mixer = new THREE.AnimationMixer(character);
+                let action = mixer.clipAction(animClips['idle']);
+                    // action.fadeIn(.5);
+                    action.play();
+            });*/
+        });
+    }else if(data === "stop"){
+        mixer = new THREE.AnimationMixer(character);
+        let action = mixer.clipAction(animClips['idle']);
+            action.fadeIn(.2);
+            action.play();
     }
-    mixer.addEventListener('finished',(e)=>{
-        console.log('completed',e);
-    });
+    else{
+        mixer = new THREE.AnimationMixer(character);
+        let action = mixer.clipAction(animClips[data]);
+        action.fadeIn(.3);
+        action.play();
+        // action.loop = THREE.LoopOnce;
+        if(data === 'dance' ||data === 'fight' ){
+            // action.loop = THREE.LoopOnce;
+        }
+        mixer.addEventListener('finished',(e)=>{
+            console.log('completed',e);
+        });
+    }
+    
 }
