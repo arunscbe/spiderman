@@ -4,30 +4,103 @@
         <title>Spider-Man</title>
     </head>
     <style>
-        .wrapper{
-            margin:auto;
+        html,body {
+         margin: 0;
+         padding: 0;
+         width:100%;
+         height:100%;
+        }
+        .container{
+            background-color: aqua;
             width:100%;
-            height:600px;
+            height:80%;
+        }
+        .headerWrapper{
+            background-color: black;
+            width:100%;
+            height:60px;
+        }
+        .headerWrapper img{
+            margin-left:50px;
+            padding-top:10px;
+            padding-bottom:10px;
+            width:100px
+        }
+        .canvasWrapper{
+            /* margin:auto; */
+            float: left;
+            background-color: green;
+            width:50%;
+            height:100%;
+        }
+        .buttonWrapper{
+            background-color: burlywood;
+            float:left;
+            width: 20%;
+            height: 100%;
+        }
+        .buttonWrapper img{
+            width:50px;
+            margin-left:50px;
+            margin-top:25px;
+            border-radius: 10px;
+            border:solid 2px grey;
+            background-color: aqua;
+            cursor:pointer;
         }
         #canvas{
-
-            width:100%;
-            height:100%;         
-
-        }
+            float:right;
+            background-color: blueviolet;
+            width:80%;
+            height:100%;  
+         }
+         .actions{
+            position: absolute;
+            margin-left:540px;
+            margin-top:500px;
+         }
+         .actions img{
+            padding: 5px;
+            background-color: rgb(202, 202, 202);
+            width:40px;
+            border-radius: 50px;
+            border:solid 2px grey;
+            cursor:pointer;
+         }
+         .contentWrapper{
+            background-color: brown;
+            float:right;
+            width:50%;
+            height:100%;
+         }
     </style>
     <script src="js/libs/jquery-3.6.4.min.js"></script>
     <body>
-        
-            <button class="forSpeach"  style="border: transparent;padding: 0 0.5rem;">Speech</button>
-        
-         <h3 id="output" class="hide"></h3>
-        <div class="wrapper">
-            <div class="actions">
-                <button id="open">Open</button>
+        <!-- <button class="forSpeach"  style="border: transparent;padding: 0 0.5rem;">Speech</button>        
+        <h3 id="output" class="hide"></h3> -->
+        <div class="container">
+            <div class="headerWrapper">
+                <img src="imgs/Marvel_Logo.png"/>
             </div>
-      <div id = "canvas"></div>
-      </div>
+            <div class="canvasWrapper">
+                <div class="buttonWrapper">
+                    <img src="imgs/front.jpg"/><br>
+                    <img src="imgs/side.jpg"/><br>
+                    <img src="imgs/back.jpg"/>
+                    
+                </div>
+               
+                <div id = "canvas">
+                    <div class="actions">
+                        <img id="open" class="open" src="imgs/open-cardboard-box.png"/><br>
+                        <!-- <button id="open">Open</button> -->
+                    </div>
+                </div>
+            </div>
+            <div class="contentWrapper">
+
+            </div>
+        </div>
     </body>
     <script src="js/libs/TweenMax.js"></script>
     <script type="module"src="js/config.js"></script>
