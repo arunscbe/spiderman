@@ -21,7 +21,7 @@ const clock = new THREE.Clock();
 $(document).ready(function () {
     let detect = detectWebGL();
     if (detect == 1) {
-        init = new sceneSetup(70, 1, 1000, 0, 2.5, 4);
+        init = new sceneSetup(70, 1, 1000, 2.5, 2.5, 3.5);
         modelLoad = new objLoad();
         modelLoad.Model();
         // window.database = init.scene;
@@ -34,18 +34,14 @@ $(document).ready(function () {
             runSpeechRecog();
         })
         const runSpeechRecog = () => {
-            document.getElementById("output").innerHTML = "Loading text...";
-            var output = document.getElementById('output');
-            let recognization = new webkitSpeechRecognition();
+            const recognization = new webkitSpeechRecognition();
             recognization.onstart = () => {
-              console.log('lisssss....');
-            //   playAnimation("idle");
+                $("#forSpeach").attr("src","imgs/voice-on.png");
             }
-            recognization.onresult = (e) => {               
-               var transcript = e.results[0][0].transcript;
-                 console.log(transcript.split(" "));
-                 let storeArray = transcript.split(" ");
-                 document.getElementById("output").innerHTML = " ";
+            recognization.onresult = (e) => {      
+                $("#forSpeach").attr("src","imgs/voice-off.png");         
+                const transcript = e.results[0][0].transcript;
+                const storeArray = transcript.split(" ");
                  storeArray.forEach(data => {
                     switch(data){
                         case "dance":
@@ -82,11 +78,21 @@ $(document).ready(function () {
         alert("YOUR BROWSER DOESNT SUPPORT WEBGL.....");
     }
     $('.actions').on('click',function(e){//0, 2.5, 4
+        var src = ($('.open').attr('src') === 'imgs/close-cardboard-box.png') ? 'imgs/open-cardboard-box.png' : 'imgs/close-cardboard-box.png';
+         $('.open').attr('src', src);
+       
         TweenMax.to(init.cameraMain.position,1,{x:0, y:2.5, z:4,onUpdate:function(){
             init.cameraMain.updateProjectionMatrix();	
-            // controls.target = targetCube.position;		
         },onComplete:()=>{
-            playAnimation(e.target.id);
+            if(e.target.id === "open"){
+                $('.voiceWrapper').show();
+                openClose(1);
+                $('.open').attr('id', "close");
+            }else{
+                $('.voiceWrapper').hide();
+                openClose(-1);
+                $('.open').attr('id', "open");
+            }            
         }});
         
     })
@@ -249,25 +255,35 @@ class objLoad {
         });
     }
 }
-
-export const playAnimation = (data) => {
-    console.log(data);
-    if(data === "open"){
-        mixerBox = new THREE.AnimationMixer( box );
-        const action = mixerBox.clipAction(boxAnim.animations[0]);
-              action.reset(); 
-              action.timeScale = 1;
-              action.clampWhenFinished = true;
-              action.loop = THREE.LoopOnce;
-              action.play();
-        mixerBox.addEventListener('finished',()=>{
+const openClose = (num) => {
+    console.log(typeof(num));
+    if(num === -1){
+        box.visible = true;
+    }       
+    mixerBox = new THREE.AnimationMixer( box );
+    const action = mixerBox.clipAction(boxAnim.animations[0]);
+          action.reset();  
+          action.timeScale = num;
+          action.clampWhenFinished = true;
+          action.loop = THREE.LoopOnce;
+          action.play();
+    mixerBox.addEventListener('finished',()=>{
+        if(num === 1){
             box.visible = false;
-            mixer = new THREE.AnimationMixer(character);
-            let action = mixer.clipAction(animClips['idle']);
-                action.fadeIn(.5);
+        }       
+        mixer = new THREE.AnimationMixer(character);
+        let action = mixer.clipAction(animClips['idle']);
+            action.fadeIn(.5);
+            if(num === 1){
                 action.play();
-        });
-    }else if(data === "stop"){
+            }else{
+                action.stop();
+            }
+            
+    });
+}
+export const playAnimation = (data) => {
+     if(data === "stop"){
         mixer = new THREE.AnimationMixer(character);
         let action = mixer.clipAction(animClips['idle']);
             action.fadeIn(.2);

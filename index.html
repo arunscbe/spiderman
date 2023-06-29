@@ -54,6 +54,20 @@
             width:80%;
             height:100%;  
          }
+         .voiceWrapper{
+            position: absolute;
+            margin-left:540px;
+            margin-top:435px;
+            display:none;
+         }
+         .voiceWrapper img{
+            padding: 5px;
+            background-color: rgb(202, 202, 202);
+            width:35px;
+            border-radius: 50px;
+            border:solid 2px grey;
+            cursor:pointer;
+         }
          .actions{
             position: absolute;
             margin-left:540px;
@@ -62,7 +76,7 @@
          .actions img{
             padding: 5px;
             background-color: rgb(202, 202, 202);
-            width:40px;
+            width:35px;
             border-radius: 50px;
             border:solid 2px grey;
             cursor:pointer;
@@ -73,11 +87,28 @@
             width:50%;
             height:100%;
          }
+         .innerContentWrapper{
+            background-color: aqua;
+            width:100%;
+            height:100%;
+         }
+         .headerContentWrapper{
+            float:left;
+            background-color: blueviolet;
+            width: 80%;
+            /* height:60px; */
+         }
+         .headerContentWrapper h1{
+            margin-left:50px;
+         }
+         .headerContentWrapper p{
+            margin-left:50px;
+            font-size: large;
+            margin-top:-15px;
+         }
     </style>
     <script src="js/libs/jquery-3.6.4.min.js"></script>
     <body>
-        <!-- <button class="forSpeach"  style="border: transparent;padding: 0 0.5rem;">Speech</button>        
-        <h3 id="output" class="hide"></h3> -->
         <div class="container">
             <div class="headerWrapper">
                 <img src="imgs/Marvel_Logo.png"/>
@@ -91,14 +122,21 @@
                 </div>
                
                 <div id = "canvas">
+                    <div class="voiceWrapper">
+                        <img id="forSpeach" class="forSpeach" src="imgs/voice-off.png"/>
+                    </div>
                     <div class="actions">
-                        <img id="open" class="open" src="imgs/open-cardboard-box.png"/><br>
-                        <!-- <button id="open">Open</button> -->
+                        <img id="open" class="open" src="imgs/close-cardboard-box.png"/>
                     </div>
                 </div>
             </div>
             <div class="contentWrapper">
-
+                <div class="innerContentWrapper">
+                    <div class="headerContentWrapper">
+                        <h1>SPIDER-MAN Mile Morales</h1>
+                        <p>Marvel Comics Spiderman Action Figure</p>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
