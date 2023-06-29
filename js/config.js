@@ -21,7 +21,7 @@ const clock = new THREE.Clock();
 $(document).ready(function () {
     let detect = detectWebGL();
     if (detect == 1) {
-        init = new sceneSetup(70, 1, 1000, 2.5, 2.5, 3.5);
+        init = new sceneSetup(70, .05, 10, 2.5, 2.5, 3.5);
         modelLoad = new objLoad();
         modelLoad.Model();
         // window.database = init.scene;
@@ -135,8 +135,9 @@ class sceneSetup {
     constructor(FOV, near, far, x, y, z, ambientColor) {
         this.container = document.getElementById("canvas");
         this.scene = new THREE.Scene();
-
-        // this.addingCube();
+        // this.scene.background = new THREE.Color( 0xa0a0a0 );
+        // this.scene.fog = new THREE.Fog( 0xa0a0a0, 20, 100 );
+        this.addingCube();
         this.camera(FOV, near, far, x, y, z);
         this.ambientLight(ambientColor);
         this.render();
@@ -152,10 +153,13 @@ class sceneSetup {
     }
     rendering() {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setClearColor(0xf0eded);
+        this.renderer.setClearColor(0xffffff);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.useLegacyLights = false;
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.container.appendChild(this.renderer.domElement);
         this.controls = new OrbitControls(this.cameraMain, this.renderer.domElement);
         this.controls.target = new THREE.Vector3(0,2,0);
@@ -169,25 +173,32 @@ class sceneSetup {
         // this.controls.maxAzimuthAngle = -115 / 120;
     }
     addingCube() {
-        this.geo = new THREE.BoxBufferGeometry(.1, .1, .1);
-        this.mat = material.cube;
-        this.camPoint = new THREE.Mesh(this.geo, this.mat);
-        this.scene.add(this.camPoint);
-        this.camPoint.position.set(0, 0, 0);
-        arrayObjects.push(this.camPoint);
-
+        this.planeGeometry = new THREE.PlaneGeometry( 20, 20, 32, 32 );
+        this.planeMaterial = new THREE.MeshStandardMaterial( { color: 0xf0eded,    combine: THREE.MixOperation,
+            side: THREE.DoubleSide } )
+        this.plane = new THREE.Mesh( this.planeGeometry, this.planeMaterial );
+        this.plane.receiveShadow = true;
+        this.scene.add( this.plane );
+        this.plane.rotation.x = Math.PI / 2;
     }
     ambientLight(ambientColor) {
         this.ambiLight = new THREE.AmbientLight(0xffffff);
-        this.light = new THREE.HemisphereLight(0xd1d1d1, 0x080820, .5);
-        this.scene.add(this.ambiLight);
-        this.scene.add(this.light);
-        this.directionalLightFront = new THREE.DirectionalLight( 0xffffff, 1);
+        this.light = new THREE.HemisphereLight(0xffffff, 0x000000, .5);
+          this.scene.add(this.ambiLight);
+         this.scene.add(this.light);
+        this.directionalLightFront = new THREE.DirectionalLight( 0xffffff, 2);
+        this.directionalLightFront.castShadow = true; 
+        this.directionalLightFront.shadow.mapSize.width = 1024; // default
+        this.directionalLightFront.shadow.mapSize.height = 1024; // default
+        this.directionalLightFront.shadow.camera.near = 0.5; // default
+        this.directionalLightFront.shadow.camera.far = 15; 
          this.directionalLightFront.position.set(0,5,5);
         this.scene.add( this.directionalLightFront );
         this.directionalLightBack = new THREE.DirectionalLight( 0xffffff, 1);
          this.directionalLightBack.position.set(0,5,-5);
         this.scene.add( this.directionalLightBack );
+//         this.helper = new THREE.CameraHelper(this.directionalLightFront.shadow.camera)
+// this.scene.add(this.helper )
     }
     animate() {
         requestAnimationFrame(this.animate.bind(this));
@@ -224,7 +235,6 @@ class objLoad {
         this.loader = new GLTFLoader();
         Object.entries(anim).map(([key, value]) => {
             this.loader.load('assets/anims/' + value + '.glb', (value) => {
-                //  console.log(value);
                 animClips[key] = value.animations[0];
             })
         })
@@ -232,9 +242,11 @@ class objLoad {
             character = gltf.scene;
             character.scale.set(2, 2, 2);           
             mixer = new THREE.AnimationMixer(character);
-            // this.action = mixer.clipAction(animClips['hi']);
-            // this.action.play();
-            // this.action.loop = THREE.LoopOnce;
+            gltf.scene.traverse(function (child) {
+                if (child.isMesh) {
+                  child.castShadow = true;
+                }
+             });
             init.scene.add(character);
         });
         this.loader.load('assets/box.glb' , gltf=>{
@@ -243,6 +255,7 @@ class objLoad {
             box.scale.set(2, 2, 2);            
             box.traverse((child)=>{
                 if(child.isMesh){
+                    child.castShadow = true;
                     if(child.name === 'Cover'){
                         child.material = new THREE.MeshPhongMaterial({
                             envMap:refCube,
