@@ -85,8 +85,10 @@ $(document).ready(function () {
         TweenMax.to(init.cameraMain.position,1,{x:0, y:2.5, z:4,onUpdate:function(){
             init.cameraMain.updateProjectionMatrix();	
             // controls.target = targetCube.position;		
+        },onComplete:()=>{
+            playAnimation(e.target.id);
         }});
-        playAnimation(e.target.id);
+        
     })
 
 
