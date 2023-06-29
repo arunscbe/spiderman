@@ -11,6 +11,7 @@ let anim = {
     'walk': 'walk',
     'run':'run',
     'looking':'looking',
+    'yes':'yes'
     
 }
 let animClips = [];
@@ -265,17 +266,32 @@ export const playAnimation = (data) => {
             action.play();
     }
     else{
-        mixer = new THREE.AnimationMixer(character);
-        let action = mixer.clipAction(animClips[data]);
-        action.fadeIn(.3);
-        action.play();
-        // action.loop = THREE.LoopOnce;
-        if(data === 'dance' ||data === 'fight' ){
-            // action.loop = THREE.LoopOnce;
+        if(data === "hi" || data === "hello"){
+            mixer = new THREE.AnimationMixer(character);
+            let action = mixer.clipAction(animClips['hi']);
+                action.fadeIn(.5);
+                action.play();
+                action.loop = THREE.LoopOnce;
+                mixer.addEventListener('finished',()=>{
+                    mixer = new THREE.AnimationMixer(character);
+                    let action = mixer.clipAction(animClips["idle"]);
+                    action.fadeIn(.3);
+                    action.play();
+                });
+        }else{
+            mixer = new THREE.AnimationMixer(character);
+            let action = mixer.clipAction(animClips['yes']);
+                action.fadeIn(.5);
+                action.play();
+                action.loop = THREE.LoopOnce;
+                mixer.addEventListener('finished',()=>{
+                    mixer = new THREE.AnimationMixer(character);
+                    let action = mixer.clipAction(animClips[data]);
+                    action.fadeIn(.3);
+                    action.play();
+                });
         }
-        mixer.addEventListener('finished',(e)=>{
-            console.log('completed',e);
-        });
+        
     }
     
 }
