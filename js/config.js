@@ -38,11 +38,13 @@ $(document).ready(function () {
             let recognization = new webkitSpeechRecognition();
             recognization.onstart = () => {
               console.log('lisssss....');
+            //   playAnimation("idle");
             }
             recognization.onresult = (e) => {               
                var transcript = e.results[0][0].transcript;
                  console.log(transcript.split(" "));
                  let storeArray = transcript.split(" ");
+                 document.getElementById("output").innerHTML = " ";
                  storeArray.forEach(data => {
                     switch(data){
                         case "dance":
@@ -59,6 +61,12 @@ $(document).ready(function () {
                             break;
                         case "stop":
                             playAnimation(data);
+                            break;
+                        case "hi":
+                            playAnimation(data);
+                            break;
+                        case "hello":
+                            playAnimation("hi");
                             break;
                     }
                  }); 
@@ -246,16 +254,9 @@ export const playAnimation = (data) => {
         mixerBox.addEventListener('finished',()=>{
             box.visible = false;
             mixer = new THREE.AnimationMixer(character);
-            let action = mixer.clipAction(animClips['hi']);
-                // action.fadeIn(.5);
+            let action = mixer.clipAction(animClips['idle']);
+                action.fadeIn(.5);
                 action.play();
-                // action.loop = THREE.LoopOnce;
-           /* mixer.addEventListener('finished',()=>{
-                mixer = new THREE.AnimationMixer(character);
-                let action = mixer.clipAction(animClips['idle']);
-                    // action.fadeIn(.5);
-                    action.play();
-            });*/
         });
     }else if(data === "stop"){
         mixer = new THREE.AnimationMixer(character);
