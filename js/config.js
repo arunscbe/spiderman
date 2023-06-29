@@ -21,7 +21,7 @@ const clock = new THREE.Clock();
 $(document).ready(function () {
     let detect = detectWebGL();
     if (detect == 1) {
-        init = new sceneSetup(70, 1, 1000, 0, 2.5, 3.5);
+        init = new sceneSetup(70, 1, 1000, 0, 2.5, 4);
         modelLoad = new objLoad();
         modelLoad.Model();
         // window.database = init.scene;
@@ -81,7 +81,11 @@ $(document).ready(function () {
         alert(detect);
         alert("YOUR BROWSER DOESNT SUPPORT WEBGL.....");
     }
-    $('.actions').on('click',function(e){
+    $('.actions').on('click',function(e){//0, 2.5, 4
+        TweenMax.to(init.cameraMain.position,1,{x:0, y:2.5, z:4,onUpdate:function(){
+            init.cameraMain.updateProjectionMatrix();	
+            // controls.target = targetCube.position;		
+        }});
         playAnimation(e.target.id);
     })
 
@@ -146,7 +150,9 @@ class sceneSetup {
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.container.appendChild(this.renderer.domElement);
         this.controls = new OrbitControls(this.cameraMain, this.renderer.domElement);
-        this.controls.target = new THREE.Vector3(0,1.6,0);
+        this.controls.target = new THREE.Vector3(0,2,0);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor  =  0.07;
         // this.controls.minDistance = 100;
         // this.controls.maxDistance = 300;
         // this.controls.maxPolarAngle = Math.PI / 2 * 115 / 120;
@@ -244,7 +250,7 @@ class objLoad {
 
 export const playAnimation = (data) => {
     console.log(data);
-    if(data === "interact"){
+    if(data === "open"){
         mixerBox = new THREE.AnimationMixer( box );
         const action = mixerBox.clipAction(boxAnim.animations[0]);
               action.reset(); 
@@ -290,8 +296,7 @@ export const playAnimation = (data) => {
                     action.fadeIn(.3);
                     action.play();
                 });
-        }
-        
+        }        
     }
     
 }
