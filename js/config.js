@@ -136,7 +136,7 @@ class sceneSetup {
         this.container = document.getElementById("canvas");
         this.scene = new THREE.Scene();
 
-        this.addingCube();
+        // this.addingCube();
         this.camera(FOV, near, far, x, y, z);
         this.ambientLight(ambientColor);
         this.render();
@@ -152,7 +152,7 @@ class sceneSetup {
     }
     rendering() {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setClearColor(0xc2c2c2);
+        this.renderer.setClearColor(0xf0eded);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
@@ -161,9 +161,9 @@ class sceneSetup {
         this.controls.target = new THREE.Vector3(0,2,0);
         this.controls.enableDamping = true;
         this.controls.dampingFactor  =  0.07;
-        // this.controls.minDistance = 100;
-        // this.controls.maxDistance = 300;
-        // this.controls.maxPolarAngle = Math.PI / 2 * 115 / 120;
+        this.controls.minDistance = 2;
+        this.controls.maxDistance = 5;
+        this.controls.maxPolarAngle = Math.PI / 2 * 115 / 120;
         // this.controls.minPolarAngle = 140 / 120;
         // this.controls.minAzimuthAngle = -280 / 120;
         // this.controls.maxAzimuthAngle = -115 / 120;
@@ -179,8 +179,15 @@ class sceneSetup {
     }
     ambientLight(ambientColor) {
         this.ambiLight = new THREE.AmbientLight(0xffffff);
-        this.light = new THREE.HemisphereLight(0xd1d1d1, 0x080820, 1);
+        this.light = new THREE.HemisphereLight(0xd1d1d1, 0x080820, .5);
         this.scene.add(this.ambiLight);
+        this.scene.add(this.light);
+        this.directionalLightFront = new THREE.DirectionalLight( 0xffffff, 1);
+         this.directionalLightFront.position.set(0,5,5);
+        this.scene.add( this.directionalLightFront );
+        this.directionalLightBack = new THREE.DirectionalLight( 0xffffff, 1);
+         this.directionalLightBack.position.set(0,5,-5);
+        this.scene.add( this.directionalLightBack );
     }
     animate() {
         requestAnimationFrame(this.animate.bind(this));
