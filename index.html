@@ -44,7 +44,6 @@
             margin-top:25px;
             border-radius: 10px;
             border:solid 2px grey;
-            background-color: aqua;
             cursor:pointer;
         }
         #canvas{
@@ -52,27 +51,26 @@
             width:80%;
             height:100%;  
          }
-         .voiceWrapper{
+         .actionControlsWrapper{
+            margin-top:400px;
+            margin-left:35%;
+            width:50px;
             position: absolute;
-            margin-left:540px;
-            margin-top:435px;
-            display:none;
+         }
+         .voiceWrapper{           
+            padding-bottom:10px;
+            display: none;
          }
          .voiceWrapper img{
-            padding: 5px;
+            padding: 3px;
             background-color: rgb(202, 202, 202);
             width:35px;
             border-radius: 50px;
             border:solid 2px grey;
             cursor:pointer;
          }
-         .actions{
-            position: absolute;
-            margin-left:540px;
-            margin-top:500px;
-         }
          .actions img{
-            padding: 5px;
+            padding: 3px;
             background-color: rgb(202, 202, 202);
             width:35px;
             border-radius: 50px;
@@ -157,11 +155,13 @@
                 </div>
                
                 <div id = "canvas">
-                    <div class="voiceWrapper">
-                        <img id="forSpeach" class="forSpeach" src="imgs/voice-off.png"/>
-                    </div>
-                    <div class="actions">
-                        <img id="open" class="open" src="imgs/close-cardboard-box.png"/>
+                    <div class="actionControlsWrapper">
+                        <div class="voiceWrapper">
+                            <img id="forSpeach" class="forSpeach" src="imgs/voice-off.png"/>
+                        </div>
+                        <div class="actions">
+                            <img id="open" class="open" src="imgs/close-cardboard-box.png"/>
+                        </div>
                     </div>
                 </div>
             </div>

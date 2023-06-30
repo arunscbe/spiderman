@@ -46,6 +46,7 @@ $(document).ready(function () {
             recognization.onresult = (e) => {      
                 $("#forSpeach").attr("src","imgs/voice-off.png");         
                 const transcript = e.results[0][0].transcript;
+                console.log(transcript);
                 const storeArray = transcript.split(" ");
                  storeArray.forEach(data => {
                     switch(data){
@@ -321,6 +322,16 @@ export const playAnimation = (data) => {
             action.fadeIn(.2);
             action.play();
     }
+    else if(data === "buy"){
+        mixer = new THREE.AnimationMixer(character);
+        let action = mixer.clipAction(animClips[data]);
+            action.fadeIn(.2);
+            action.play();
+            action.loop = THREE.LoopOnce;
+            mixer.addEventListener('finished',()=>{
+                afterCompleteAnim('idle');
+            });
+    }
     else{
         if(data === "hi" || data === "hello"){
             mixer = new THREE.AnimationMixer(character);
@@ -329,10 +340,7 @@ export const playAnimation = (data) => {
                 action.play();
                 action.loop = THREE.LoopOnce;
                 mixer.addEventListener('finished',()=>{
-                    mixer = new THREE.AnimationMixer(character);
-                    let action = mixer.clipAction(animClips["idle"]);
-                    action.fadeIn(.3);
-                    action.play();
+                    afterCompleteAnim('idle');
                 });
         }else{
             mixer = new THREE.AnimationMixer(character);
@@ -341,12 +349,15 @@ export const playAnimation = (data) => {
                 action.play();
                 action.loop = THREE.LoopOnce;
                 mixer.addEventListener('finished',()=>{
-                    mixer = new THREE.AnimationMixer(character);
-                    let action = mixer.clipAction(animClips[data]);
-                    action.fadeIn(.3);
-                    action.play();
+                    afterCompleteAnim(data);
                 });
         }        
     }
     
+}
+const afterCompleteAnim = (data) => {
+    mixer = new THREE.AnimationMixer(character);
+        let action = mixer.clipAction(animClips[data]);
+            action.fadeIn(.3);
+            action.play();
 }
