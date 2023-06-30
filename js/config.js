@@ -2,7 +2,7 @@ import * as THREE from './libs/three.module.js';
  import { GLTFLoader } from './libs/GLTFLoader.js';
 import {OrbitControls} from './libs/OrbitControls.js';
 let init, modelLoad,character,box,boxAnim,refCube;
-let arrayObjects = [],mixer,mixerBox;
+let mixer,mixerBox;
 let anim = {
     'hi':'hi',
     'idle': 'idle',
@@ -11,7 +11,8 @@ let anim = {
     'walk': 'walk',
     'run':'run',
     'looking':'looking',
-    'yes':'yes'
+    'yes':'yes',
+    'buy':'pump'
     
 }
 let animClips = [];
@@ -64,6 +65,9 @@ $(document).ready(function () {
                             break;
                         case "hello":
                             playAnimation("hi");
+                            break;
+                        case "buy":
+                            playAnimation(data);
                             break;
                     }
                  }); 
