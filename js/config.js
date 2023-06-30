@@ -12,8 +12,12 @@ let anim = {
     'run':'run',
     'looking':'looking',
     'yes':'yes',
-    'buy':'pump'
-    
+    'buy':'pump'    
+}
+const camAnimData = {
+   "front" : {'x':0,'y':2.5,'z':4},
+    "side" : {'x':4,'y':2.5,'z':0},
+    "back" : {'x':0,'y':2.5,'z':-4}
 }
 let animClips = [];
 const clock = new THREE.Clock();
@@ -98,7 +102,10 @@ $(document).ready(function () {
                 $('.open').attr('id', "open");
             }            
         }});
-        
+    })
+    $('.buttonWrapper').on('click',(e)=>{
+        // console.log(camAnimData[e.target.id]);
+        cameraAnimation(camAnimData[e.target.id]);
     })
 
 
@@ -139,8 +146,6 @@ class sceneSetup {
     constructor(FOV, near, far, x, y, z, ambientColor) {
         this.container = document.getElementById("canvas");
         this.scene = new THREE.Scene();
-        // this.scene.background = new THREE.Color( 0xa0a0a0 );
-        // this.scene.fog = new THREE.Fog( 0xa0a0a0, 20, 100 );
         this.addingCube();
         this.camera(FOV, near, far, x, y, z);
         this.ambientLight(ambientColor);
@@ -272,9 +277,6 @@ class objLoad {
                     }
                 }
             });
-            // mixerBox = new THREE.AnimationMixer( box );
-            // this.actionOne = mixerBox.clipAction(boxAnim.animations[0]);
-            // this.actionOne.play();
             init.scene.add(box);
         });
     }
@@ -302,9 +304,15 @@ const openClose = (num) => {
                 action.play();
             }else{
                 action.stop();
-            }
-            
+            }            
     });
+}
+const cameraAnimation = data => {
+    TweenMax.to(init.cameraMain.position,1,{x:data.x, y:data.y, z:data.z,onUpdate:function(){
+        init.cameraMain.updateProjectionMatrix();	
+    },onComplete:()=>{
+      console.log('completed......');
+    }});
 }
 export const playAnimation = (data) => {
      if(data === "stop"){
